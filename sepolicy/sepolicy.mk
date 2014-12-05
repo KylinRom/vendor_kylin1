@@ -4,7 +4,7 @@
 #
 
 BOARD_SEPOLICY_DIRS += \
-    vendor/pa/sepolicy
+    vendor/kylin/sepolicy
 
 BOARD_SEPOLICY_UNION += \
     file.te \

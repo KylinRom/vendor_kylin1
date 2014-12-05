@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Version 2.0.4, Adapted for AOSPA.
-
 # We don't allow scrollback buffer
 echo -e '\0033\0143'
 clear
@@ -31,6 +29,24 @@ else
 : ${THREADS:="$(cat /proc/cpuinfo | grep "^processor" | wc -l)"}
 fi
 
+# Set ccache
+export USER_CCACHE=1
+if [ -f ".ccache_dir" ]; then
+    export CCACHE_DIR=`cat .ccache_dir | sed -n '1p'`
+    size=`cat .ccache_dir | sed -n '2p'`
+    prebuilts/misc/linux-x86/ccache/ccache -M "$size"G
+else
+    echo "please specify ccache directory"
+    read cache_dir
+    echo $cache_dir > .ccache_dir
+    export CCACHE_DIR=$cache_dir
+
+    echo "please specify ccache size, in GB"
+    read cache_size
+    echo $cache_size >> .ccache_dir
+    prebuilts/misc/linux-x86/ccache/ccache -M "$cache_size"G
+fi
+
 # If there is more than one jdk installed, use latest 7.x
 if [ "`update-alternatives --list javac | wc -l`" -gt 1 ]; then
         JDK7=$(dirname `update-alternatives --list javac | grep "\-7\-"` | tail -n1)
@@ -44,16 +60,10 @@ DEVICE="$1"
 EXTRAS="$2"
 
 # Get build version
-MAJOR=$(cat $DIR/vendor/pa/vendor.mk | grep 'ROM_VERSION_MAJOR := *' | sed  's/ROM_VERSION_MAJOR := //g')
-MINOR=$(cat $DIR/vendor/pa/vendor.mk | grep 'ROM_VERSION_MINOR := *' | sed  's/ROM_VERSION_MINOR := //g')
-MAINTENANCE=$(cat $DIR/vendor/pa/vendor.mk | grep 'ROM_VERSION_MAINTENANCE := *' | sed  's/ROM_VERSION_MAINTENANCE := //g')
-TAG=$(cat $DIR/vendor/pa/vendor.mk | grep 'ROM_VERSION_TAG := *' | sed  's/ROM_VERSION_TAG := //g')
-
-if [ -n "$TAG" ]; then
-        VERSION=$MAJOR.$MINOR$MAINTENANCE-$TAG
-else
-        VERSION=$MAJOR.$MINOR$MAINTENANCE
-fi
+MAJOR=$(cat $DIR/vendor/kylin/vendor.mk | grep 'ROM_VERSION_MAJOR := *' | sed  's/ROM_VERSION_MAJOR := //g')
+MINOR=$(cat $DIR/vendor/kylin/vendor.mk | grep 'ROM_VERSION_MINOR := *' | sed  's/ROM_VERSION_MINOR := //g')
+MAINTENANCE=$(cat $DIR/vendor/kylin/vendor.mk | grep 'ROM_BUILD_TYPE := *' | sed  's/ROM_BUILD_TYPE := //g')
+VERSION=$MAJOR.$MINOR$MAINTENANCE
 
 # If there is no extra parameter, reduce parameters index by 1
 if [ "$EXTRAS" == "true" ] || [ "$EXTRAS" == "false" ]; then
@@ -67,7 +77,7 @@ fi
 # Get start time
 res1=$(date +%s.%N)
 
-echo -e "${cya}Building ${bldcya}AOSPA $VERSION for $DEVICE ${txtrst}";
+echo -e "${cya}Building ${bldcya}KylinRom for $DEVICE ${txtrst}";
 echo -e "${bldgrn}Start time: $(date) ${txtrst}"
 
 # Decide what command to execute
@@ -107,8 +117,8 @@ fi
 if [ -n "${INTERACTIVE}" ]; then
         echo -e "${bldblu}Dropping to interactive shell${txtrst}"
         echo -en "${bldblu}Remeber to lunch you device:"
-        if [ "${VENDOR}" == "pa" ]; then
-                echo -e "[${bldgrn}lunch pa_$DEVICE-userdebug${bldblu}]${txtrst}"
+        if [ "${VENDOR}" == "kylin" ]; then
+                echo -e "[${bldgrn}lunch kylin_$DEVICE-userdebug${bldblu}]${txtrst}"
         else
                 echo -e "[${bldgrn}lunch full_$DEVICE-userdebug${bldblu}]${txtrst}"
         fi
@@ -123,7 +133,7 @@ else
         # lunch/brunch device
         echo -e "${bldblu}Lunching device [$DEVICE] ${cya}(Includes dependencies sync)${txtrst}"
         export PREFS_FROM_SOURCE
-        lunch "pa_$DEVICE-userdebug";
+        lunch "kylin_$DEVICE-userdebug";
 
         echo -e "${bldblu}Starting compilation${txtrst}"
         mka bacon

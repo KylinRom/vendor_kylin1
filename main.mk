@@ -14,12 +14,12 @@
 
 
 
-include vendor/pa/vendor.mk
-include vendor/pa/configs/aosp_fixes.mk
-include vendor/pa/configs/system.mk
-include vendor/pa/configs/pa_overrides.mk
-include vendor/pa/configs/bootanimation.mk
-include vendor/pa/configs/version.mk
-include vendor/pa/configs/legacy_extras.mk
-include vendor/pa/configs/themes_common.mk
-#include vendor/pa/sepolicy/sepolicy.mk
+include vendor/kylin/vendor.mk
+include vendor/kylin/configs/aosp_fixes.mk
+include vendor/kylin/configs/system.mk
+include vendor/kylin/configs/kylin_overrides.mk
+include vendor/kylin/configs/bootanimation.mk
+include vendor/kylin/configs/version.mk
+include vendor/kylin/configs/legacy_extras.mk
+include vendor/kylin/configs/themes_common.mk
+#include vendor/kylin/sepolicy/sepolicy.mk
