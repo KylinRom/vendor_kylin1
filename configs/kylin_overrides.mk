@@ -12,5 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.kylin.device=$(DEVICE)
+PRODUCT_PACKAGES += \
+    busybox

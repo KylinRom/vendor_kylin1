@@ -22,4 +22,3 @@ include vendor/kylin/configs/bootanimation.mk
 include vendor/kylin/configs/version.mk
 include vendor/kylin/configs/legacy_extras.mk
 include vendor/kylin/configs/themes_common.mk
-#include vendor/kylin/sepolicy/sepolicy.mk
